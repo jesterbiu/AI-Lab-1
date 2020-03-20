@@ -1,17 +1,20 @@
-package EightPuzzles;
+package nPuzzles;
 
 public class PuzzleState {
 
     // State
-    private char[][] state = new char[3][3];
+    private final char[][] state;
     // Mark the space's position
-    private int[] spacePos = new int[2];
+    private final int[] spacePos = new int[2];
 
     // Constructor
-    PuzzleState (char[][] initState) {
+    public PuzzleState (char[][] initState) {
         // Initialize the state from input
-        for (int iLine = 0; iLine != 3; iLine++) {
-            for (int iCol = 0; iCol != 3; iCol++) {
+        int height = initState.length;
+        int width = (initState[1]).length;
+        state = initState.clone();
+        for (int iLine = 0; iLine != height; iLine++) {
+            for (int iCol = 0; iCol != width; iCol++) {
                 state[iLine][iCol] = initState[iLine][iCol];
 
                 // Record the space's position
@@ -22,6 +25,11 @@ public class PuzzleState {
             }
         }
 
+    }
+
+    // Comparable
+    public boolean equals(PuzzleState oth) {
+        return state.equals(oth.state);
     }
 
     // Getter
