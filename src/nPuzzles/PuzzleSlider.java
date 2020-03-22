@@ -21,21 +21,20 @@ public class PuzzleSlider {
 
 
     // Check current boundary to see if the movement is feasible
-    private static boolean checkBoundary(int direction, PuzzleState currState) {
-        int[] spacePos = currState.getSpacePos();
+    private static boolean checkBoundary(int direction, PuzzleState currState, Point spacePos) {
         switch (direction) {
             case 1: // up
-                return spacePos[1] == 0? false : true;
+                return spacePos.getY() == 0? false : true;
             case 2: // down
                 int length = currState.getState().length;
-                return spacePos[1] == length? false : true;
+                return spacePos.getY() == length - 1? false : true;
 
             case 3: //left
-                return spacePos[0] == 0? false : true;
+                return spacePos.getX() == 0? false : true;
 
             case 4: // right
                 int height = ((currState.getState())[1]).length;
-                return spacePos[0] == height? false : true;
+                return spacePos.getX() == height - 1? false : true;
         }
         return false;
     }
@@ -43,37 +42,43 @@ public class PuzzleSlider {
     // Slide the puzzle towards the direction
     private static PuzzleState slide (int direction, PuzzleState currState)
     {
-        int[] spacePos = currState.getSpacePos();
-        if (checkBoundary(direction, currState)) {
+       Point spacePos = currState.getSpacePos();
+        if (checkBoundary(direction, currState, spacePos)) {
 
             // Initialize data for sliding
             // Record space's position
-            int x = spacePos[1], y = spacePos[0];
+            int x = spacePos.getX(), y = spacePos.getY();
             // Copy state
-            char[][] state = currState.getState().clone();
+
+            char[][] state = currState.getState();
 
             // Slide
             switch (direction) {
                 case 1: // up
+                    //System.out.print("up ");
                     state[y][x] = state[y - 1][x];
                     state[y - 1][x] = ' ';
                     break;
                 case 2: // down
+                    //System.out.print("down ");
                     state[y][x] = state[y + 1][x];
                     state[y + 1][x] = ' ';
                     break;
                 case 3: //left
+                    //System.out.println("left ");
                     state[y][x] = state[y][x - 1];
                     state[y][x - 1] = ' ';
                     break;
                 case 4: // right
+                    //System.out.println("right ");
                     state[y][x] = state[y][x + 1];
                     state[y][x + 1] = ' ';
                     break;
             } // end of switch
-            PuzzleState xxx = new PuzzleState(state);
-            PrintState.printer(xxx);
-            return (xxx);
+            PuzzleState newState = new PuzzleState(state);
+            //System.out.println("Slider:");
+            //PrintState.printer(newState);
+            return newState;
         }// end of if
 
         // If the boundary crossed or the direction is illegal,

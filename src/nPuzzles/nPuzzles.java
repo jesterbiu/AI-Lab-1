@@ -5,7 +5,7 @@ public class nPuzzles {
 
     public static void Solve(PuzzleState initState, PuzzleState goalState)
     {
-        PrintState.printer(initState);
+        //PrintState.printer(initState);
         // Choose an algorithm
         System.out.println ("Choose an search algorithm:");
         System.out.println ("1. Breadth First");

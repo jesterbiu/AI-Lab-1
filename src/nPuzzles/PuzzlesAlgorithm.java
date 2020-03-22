@@ -1,10 +1,14 @@
 package nPuzzles;
 import java.util.*;
 
-public abstract class PuzzlesAlgorithm {
+// Every algorithm extends this class
+// so nPuzzles.solve() could choose algorithms at run-time
+abstract class PuzzlesAlgorithm {
     abstract void puzzleAlgo(PuzzleState init, PuzzleState goal);
+    HashMap<Integer, PuzzleState> exploredStates;
 }
 
+// Print a state
 class PrintState {
     // print a state
     public static void  printer(PuzzleState currState) {
@@ -22,56 +26,82 @@ class PrintState {
     }
 }
 
+class AStar extends PuzzlesAlgorithm {
+    class CostCompare implements Comparator<PuzzleState> {
+        public int compare(PuzzleState a, PuzzleState b)
+        {
 
-class CostCompare implements Comparator<PuzzleState> {
-
-    public int compare(PuzzleState a, PuzzleState b)
-    {
-
-        return 1;
+            return 1;
+        }
     }
+
+    public void puzzleAlgo (PuzzleState init, PuzzleState goal){}
 }
+
 
 class BreadthFirst extends PuzzlesAlgorithm {
     public void puzzleAlgo (PuzzleState init, PuzzleState goal)
     {
         // Validate inputs
-        if (init.equals(goal))
+        if (init == null || goal == null) {
+            System.out.println("Invalid input!");
             return;
+        }
 
         // Initialize resources
+        exploredStates = new HashMap<Integer, PuzzleState>();
         LinkedList<PuzzleState> queue = new LinkedList<PuzzleState>();
         queue.add(init);
-
 
         while (!queue.isEmpty()) {
             // Initialize
             PuzzleState currS = queue.removeFirst();
-            ArrayList<PuzzleState> nextS = new ArrayList<PuzzleState>();
 
-            // Slide and generate the next possible state
-            nextS.add(PuzzleSlider.up(currS));
-            nextS.add(PuzzleSlider.down(currS));
-            nextS.add(PuzzleSlider.left(currS));
-            nextS.add(PuzzleSlider.right(currS));
+            // Print actions
+            PrintState.printer(currS);
 
-
-            for (PuzzleState s : nextS) {
-                // Verify state
-                if (s != null) {
-                    // Print an action
-                    PrintState.printer(s);
-
-                    // Check goal
-                    if (s.equals(goal))
-                        break;
-                }
+            // Check goal
+            if (PuzzleState.equals(currS, goal)) {
+                System.out.println("\nGoal reached");
+                break;
             }
 
+            // Slide and generate the next possible state
+            addValidState(PuzzleSlider.up(currS), queue);
+            addValidState(PuzzleSlider.down(currS), queue);
+            addValidState(PuzzleSlider.left(currS), queue);
+            addValidState(PuzzleSlider.right(currS), queue);
+        } // end of while
+    } // end of puzzleAlgo()
 
-        }
-
+    private static boolean isQueued (PuzzleState state,
+                                     LinkedList<PuzzleState> queue) {
+        int index = ((LinkedList<PuzzleState>) queue).indexOf(state);
+        return index >= 0? true : false;
     }
-}
+
+    private static boolean isExplored (PuzzleState state,
+                                       HashMap<Integer, PuzzleState> explored) {
+        return explored.containsKey(state.hashCode());
+    }
+
+    // Add a state after validation
+    private void addValidState (PuzzleState state, Object queue) {
+        // If the state is not null,
+        // queued or explored
+        if (state != null
+            && !isQueued(state, (LinkedList<PuzzleState>)queue)
+            && !isExplored(state, exploredStates)) {
+
+            // add to exploredStates and enqueue
+            int hashcode = PuzzleState.hachcode(state);
+            exploredStates.put(hashcode, state);
+            ((LinkedList<PuzzleState>) queue).add(state);
+        }
+    }
+
+
+} // end of class Breadth first
+
 
 
