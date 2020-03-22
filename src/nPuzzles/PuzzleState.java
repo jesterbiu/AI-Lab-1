@@ -4,6 +4,9 @@ package nPuzzles;
 import java.util.Arrays;
 
 public class PuzzleState {
+    // Parent state
+    private PuzzleState parentState = null;
+
     // State
     private final char[][] state;
     public static char[][] cloneState(char[][] state) {
@@ -15,9 +18,19 @@ public class PuzzleState {
     }
 
     // Constructor
+    // Initialize the state from input
     public PuzzleState (char[][] initState) {
-        // Initialize the state from input
         state = cloneState(initState);
+    }
+
+    public PuzzleState (char[][] initState, PuzzleState parent) {
+        state = cloneState(initState);
+        parentState = parent;
+    }
+
+    public PuzzleState (PuzzleState oth) {
+        parentState = oth.parentState;
+        state = cloneState(oth.state);
     }
 
     // Comparable
@@ -29,6 +42,7 @@ public class PuzzleState {
     }
 
     // Getter
+    public PuzzleState getParentState() { return parentState; }
     public char[][] getState() { return cloneState(state); }
     public Point getSpacePos() {
         // Return the space's position

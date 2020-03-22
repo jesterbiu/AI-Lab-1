@@ -8,10 +8,29 @@ abstract class PuzzlesAlgorithm {
     HashMap<Integer, PuzzleState> exploredStates;
 }
 
-// Print a state
+
 class PrintState {
-    // print a state
-    public static void  printer(PuzzleState currState) {
+    // Print actions
+    public static void printer (PuzzleState goalState) {
+
+        // Push all actions into stacks
+        LinkedList<PuzzleState> stack = new LinkedList<PuzzleState>();
+        PuzzleState prevState = goalState;
+        while (prevState != null) {
+            stack.push(prevState);
+            prevState = prevState.getParentState();
+        }
+
+        // Pop actions and print
+        while (!stack.isEmpty()) {
+            PuzzleState aState = stack.pop();
+            printState(aState);
+        }
+    }
+
+    // Print a state
+    private static void printState (PuzzleState currState)
+    {
         char[][] refState = currState.getState();
         for (char[] line : refState) {
             for (char ch : line){
@@ -57,12 +76,13 @@ class BreadthFirst extends PuzzlesAlgorithm {
             // Initialize
             PuzzleState currS = queue.removeFirst();
 
-            // Print actions
-            PrintState.printer(currS);
-
             // Check goal
             if (PuzzleState.equals(currS, goal)) {
                 System.out.println("\nGoal reached");
+
+                // Print actions
+                PrintState.printer(currS);
+
                 break;
             }
 
@@ -73,6 +93,7 @@ class BreadthFirst extends PuzzlesAlgorithm {
             addValidState(PuzzleSlider.right(currS), queue);
         } // end of while
     } // end of puzzleAlgo()
+
 
     private static boolean isQueued (PuzzleState state,
                                      LinkedList<PuzzleState> queue) {

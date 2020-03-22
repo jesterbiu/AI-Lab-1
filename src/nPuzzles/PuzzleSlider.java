@@ -75,7 +75,7 @@ public class PuzzleSlider {
                     state[y][x + 1] = ' ';
                     break;
             } // end of switch
-            PuzzleState newState = new PuzzleState(state);
+            PuzzleState newState = new PuzzleState(state, currState);
             //System.out.println("Slider:");
             //PrintState.printer(newState);
             return newState;
