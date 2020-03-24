@@ -6,6 +6,18 @@ import java.util.Arrays;
 public class PuzzleState {
     // Parent state
     private PuzzleState parentState = null;
+    int stateCost = 0;
+    private static int getStateCost (PuzzleState prev) {
+        if (prev == null)
+            return 0;
+
+        int cost = 0;
+        while (prev != null) {
+            cost++;
+            prev = prev.parentState;
+        }
+        return cost;
+    }
 
     // State
     private final char[][] state;
@@ -26,10 +38,12 @@ public class PuzzleState {
     public PuzzleState (char[][] initState, PuzzleState parent) {
         state = cloneState(initState);
         parentState = parent;
+        stateCost = getStateCost(parentState);
     }
 
     public PuzzleState (PuzzleState oth) {
-        parentState = oth.parentState;
+        this.parentState = oth.parentState;
+        stateCost = getStateCost(parentState);
         state = cloneState(oth.state);
     }
 
@@ -42,9 +56,10 @@ public class PuzzleState {
     }
 
     // Getter
-    public PuzzleState getParentState() { return parentState; }
-    public char[][] getState() { return cloneState(state); }
-    public Point getSpacePos() {
+    public PuzzleState getParentState () { return parentState; }
+    public int getStateCost () { return stateCost; }
+    public char[][] getState () { return cloneState(state); }
+    public Point getSpacePos () {
         // Return the space's position
         int height = state.length;
         int width = (state[1]).length;
