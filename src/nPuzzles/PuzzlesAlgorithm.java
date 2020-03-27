@@ -49,14 +49,20 @@ class PrintState {
     }
 }
 
-
 class CostCompare implements Comparator<PuzzleState> {
 
-    // Calculating a state's hCost needs the goal state
-    PuzzleState goal = null;
+    // Constructor
+    public CostCompare () {}
     public CostCompare (PuzzleState p) {
         goal = p;
     }
+
+    // goal
+    private PuzzleState goal = null;
+    // Setter
+    public void setGoal (PuzzleState g) { goal = g; }
+
+    // Methods below must be called after goal is set
 
     // F-cost() = G() + H();
     // G() = cost to reach the current state from the initial state
@@ -111,9 +117,16 @@ class CostCompare implements Comparator<PuzzleState> {
     }
 }
 
-class AStar extends PuzzlesAlgorithm {
+// A* search
+class ASS extends PuzzlesAlgorithm {
+
+    // Comparator
+    CostCompare costCmp = new CostCompare();
+
     public void puzzleAlgo (PuzzleState init, PuzzleState goal)
     {
+        System.out.println ("A* Search");
+
         // Validate inputs
         if (init == null || goal == null) {
             System.out.println("Invalid input!");
@@ -122,7 +135,7 @@ class AStar extends PuzzlesAlgorithm {
 
         // Initialize resources
         exploredStates = new HashMap<Integer, PuzzleState>();
-        CostCompare costCmp = new CostCompare(goal);
+        costCmp.setGoal(goal);
         PriorityQueue<PuzzleState> queue = new PriorityQueue<PuzzleState>(costCmp);
         queue.add(init);
 
@@ -137,7 +150,7 @@ class AStar extends PuzzlesAlgorithm {
                 // Print actions
                 PrintState.printer(currS);
 
-                break;
+                return;
             }
 
             // Slide and generate the next possible state
@@ -146,6 +159,7 @@ class AStar extends PuzzlesAlgorithm {
             addValidState(PuzzleSlider.left(currS), queue);
             addValidState(PuzzleSlider.right(currS), queue);
         } // end of while
+        System.out.println("Failed to find a solution!");
     } // end of puzzleAlgo()
 
 
@@ -160,24 +174,44 @@ class AStar extends PuzzlesAlgorithm {
     }
 
     // Add a state after validation
-    private void addValidState (PuzzleState state, Object queue) {
-        // If the state is not null,
-        // queued or explored
+    private void addValidState (PuzzleState state, Object q) {
+        PriorityQueue<PuzzleState>queue = (PriorityQueue<PuzzleState>)q;
+        // If the state is not null, queued or explored
+        // add to exploredStates and enqueue
         if (state != null
-                && !isQueued(state, (PriorityQueue<PuzzleState>)queue)
+                && !isQueued(state, queue)
                 && !isExplored(state, exploredStates)) {
 
-            // add to exploredStates and enqueue
+
             int hashcode = PuzzleState.hachcode(state);
             exploredStates.put(hashcode, state);
-            ((LinkedList<PuzzleState>) queue).add(state);
+            queue.add(state);
         }
-    }
-}
+        // If the state exists in the queue but has higher cost
+        // replace that node with this state
+        else if (isQueued(state, queue)) {
+            Iterator<PuzzleState> iter =  ((PriorityQueue<PuzzleState>) q).iterator();
+            while (iter.hasNext()) {
+                PuzzleState iterState =  iter.next();
+                if (PuzzleState.equals(state,iterState)
+                && (costCmp.compare(state, iterState) < 0)) {
+                    queue.remove (iterState);
+                    queue.add (state);
+                    break;
+                }
+            } // end of while
+        } // end of if
+        else { // do nothing
+        }
+    }// end of addValidState
+} // end of ASS
 
-class BreadthFirst extends PuzzlesAlgorithm {
+// Breadth First Search
+class BFS extends PuzzlesAlgorithm {
     public void puzzleAlgo (PuzzleState init, PuzzleState goal)
     {
+        System.out.println ("Breadth First Search");
+
         // Validate inputs
         if (init == null || goal == null) {
             System.out.println("Invalid input!");
@@ -200,7 +234,7 @@ class BreadthFirst extends PuzzlesAlgorithm {
                 // Print actions
                 PrintState.printer(currS);
 
-                break;
+               return;
             }
 
             // Slide and generate the next possible state
@@ -209,6 +243,8 @@ class BreadthFirst extends PuzzlesAlgorithm {
             addValidState(PuzzleSlider.left(currS), queue);
             addValidState(PuzzleSlider.right(currS), queue);
         } // end of while
+
+        System.out.println("Failed to find a solution!");
     } // end of puzzleAlgo()
 
 
@@ -225,13 +261,12 @@ class BreadthFirst extends PuzzlesAlgorithm {
 
     // Add a state after validation
     private void addValidState (PuzzleState state, Object queue) {
-        // If the state is not null,
-        // queued or explored
+        // If the state is not null, queued or explored
+        // add to exploredStates and enqueue
         if (state != null
             && !isQueued(state, (LinkedList<PuzzleState>)queue)
             && !isExplored(state, exploredStates)) {
 
-            // add to exploredStates and enqueue
             int hashcode = PuzzleState.hachcode(state);
             exploredStates.put(hashcode, state);
             ((LinkedList<PuzzleState>) queue).add(state);
