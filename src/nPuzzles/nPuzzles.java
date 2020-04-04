@@ -37,7 +37,7 @@ public class nPuzzles {
                        algorithm = new ASS();
                        break;
                    case 3:
-                       //algorithm = new DFS();
+                       algorithm = new DFS();
                        break;
                    default:
                        break;

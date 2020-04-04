@@ -27,7 +27,7 @@ class ASS extends PuzzlesAlgorithm {
             PuzzleState currS = queue.poll();
 
             // Check goal
-            if (PuzzleState.equals(currS, goal)) {
+            if (currS.equals(goal)) {
                 System.out.println("\nGoal reached");
 
                 // Print actions
@@ -35,6 +35,10 @@ class ASS extends PuzzlesAlgorithm {
 
                 return;
             }
+
+            // add to Explored
+            int hashcode = currS.hashCode();
+            exploredStates.put(hashcode, currS);
 
             // Slide and generate the next possible state
             addValidState(PuzzleSlider.up(currS), queue);
@@ -60,8 +64,7 @@ class ASS extends PuzzlesAlgorithm {
                 && !isExplored(state, exploredStates)) {
 
 
-            int hashcode = PuzzleState.hachcode(state);
-            exploredStates.put(hashcode, state);
+
             queue.add(state);
         }
         // If the state exists in the queue but has higher cost
@@ -70,7 +73,7 @@ class ASS extends PuzzlesAlgorithm {
             Iterator<PuzzleState> iter =  ((PriorityQueue<PuzzleState>) q).iterator();
             while (iter.hasNext()) {
                 PuzzleState iterState =  iter.next();
-                if (PuzzleState.equals(state,iterState)
+                if (state.equals(iterState)
                         && (costCmp.compare(state, iterState) < 0)) {
                     queue.remove (iterState);
                     queue.add (state);

@@ -1,11 +1,13 @@
 package nPuzzles;
-import java.util.*;
 
-// Breadth First Search
-class BFS extends PuzzlesAlgorithm {
-    public void puzzleAlgorithm (PuzzleState init, PuzzleState goal)
-    {
-        System.out.println ("Breadth First Search");
+import java.util.HashMap;
+import java.util.LinkedList;
+
+// Depth First Search
+class DFS extends PuzzlesAlgorithm {
+
+    public void puzzleAlgorithm (PuzzleState init, PuzzleState goal) {
+        System.out.println ("Depth First Search");
 
         // Validate inputs
         if (init == null || goal == null) {
@@ -15,12 +17,15 @@ class BFS extends PuzzlesAlgorithm {
 
         // Initialize resources
         exploredStates = new HashMap<Integer, PuzzleState>();
-        LinkedList<PuzzleState> queue = new LinkedList<PuzzleState>();
-        queue.add(init);
+        LinkedList<PuzzleState> stack = new LinkedList<PuzzleState>();
+        stack.push(init);
 
-        while (!queue.isEmpty()) {
+        while (!stack.isEmpty()) {
             // Initialize
-            PuzzleState currS = queue.removeFirst();
+            PuzzleState currS = stack.pop();
+
+            // test print
+            System.out.println(currS.hashCode());
 
             // Check goal
             if (currS.equals(goal)) {
@@ -36,34 +41,28 @@ class BFS extends PuzzlesAlgorithm {
             int hashcode = currS.hashCode();
             exploredStates.put(hashcode, currS);
 
-            // Slide and generate the next possible state
-            addValidState(PuzzleSlider.up(currS), queue);
-            addValidState(PuzzleSlider.down(currS), queue);
-            addValidState(PuzzleSlider.left(currS), queue);
-            addValidState(PuzzleSlider.right(currS), queue);
-        } // end of while
 
+            // Slide and generate the next possible state
+            addValidState(PuzzleSlider.up(currS), stack);
+            addValidState(PuzzleSlider.down(currS), stack);
+            addValidState(PuzzleSlider.left(currS), stack);
+            addValidState(PuzzleSlider.right(currS), stack);
+        } // end of while
         System.out.println("Failed to find a solution!");
     }
 
-
     protected boolean isQueued (PuzzleState state, Object queue) {
-        int index = ((LinkedList<PuzzleState>)queue).indexOf(state);
-        return index >= 0;
+        return ((LinkedList<PuzzleState>)queue).contains(state);
     }
 
-
-    // Add a state after validation
-    protected void addValidState (PuzzleState state, Object queue) {
+    protected void addValidState (PuzzleState state, Object stack) {
         // If the state is not null, queued or explored
         // add to exploredStates and enqueue
         if (state == null)
             return;
-        if (!isQueued(state, queue)
+        if (!isQueued(state, stack)
                 && !isExplored(state, exploredStates)
         )
-            ((LinkedList<PuzzleState>) queue).push(state);
+            ((LinkedList<PuzzleState>) stack).push(state);
     }
-
-
-} // end of class Breadth first
+}

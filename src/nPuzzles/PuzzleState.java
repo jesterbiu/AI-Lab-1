@@ -48,11 +48,13 @@ public class PuzzleState {
     }
 
     // Comparable
-    public static boolean equals (PuzzleState a, PuzzleState b) {
-        return Arrays.deepEquals(a.state, b.state);
+    public boolean equals (PuzzleState oth) {
+        if (oth == this)
+            return true;
+        return Arrays.deepEquals(this.state, oth.state);
     }
-    public static int hachcode (PuzzleState oth) {
-        return Arrays.deepHashCode(oth.state);
+    public int hashCode () {
+        return Arrays.deepHashCode(state);
     }
 
     // Getter
