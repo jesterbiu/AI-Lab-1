@@ -6,7 +6,8 @@ public class nPuzzles {
 
     private static String[] algorithmList = {
             "Breadth First Search",
-            "A* Search"};
+            "A* Search",
+            "Depth First Search"};
 
 
     public static void Solve(PuzzleState initState, PuzzleState goalState)
@@ -16,7 +17,6 @@ public class nPuzzles {
         System.out.println ("Choose an search algorithm:");
 
         // Select an algorithm
-
         int i = 1;
         for (String s : algorithmList) {
             System.out.printf("%d. %s\n", i++, s);
@@ -37,7 +37,7 @@ public class nPuzzles {
                        algorithm = new ASS();
                        break;
                    case 3:
-                       // algorithm = new DFS();
+                       //algorithm = new DFS();
                        break;
                    default:
                        break;
@@ -50,7 +50,7 @@ public class nPuzzles {
 
         // Solve and print actions
         if (algorithm != null)
-            algorithm.puzzleAlgo(initState, goalState);
+            algorithm.puzzleAlgorithm(initState, goalState);
         else
             System.out.println("Algorithm not initialized!");
     }

@@ -46,7 +46,7 @@ public class main {
                 {'3', '4', ' '},
                 {'6', '7', '8'}};
 
-        PuzzleState start = new PuzzleState(startState0);
+        PuzzleState start = new PuzzleState(startState1);
         PuzzleState goal = new PuzzleState(goalState);
 
         nPuzzles.Solve(start, goal);

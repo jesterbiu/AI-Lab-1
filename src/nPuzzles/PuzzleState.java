@@ -27,7 +27,7 @@ public class PuzzleState {
             newState[iLine] = state[iLine].clone();
         }
         return newState;
-    }
+    }//char[] -> reference
 
     // Constructor
     // Initialize the state from input
@@ -58,7 +58,7 @@ public class PuzzleState {
     // Getter
     public PuzzleState getParentState () { return parentState; }
     public int getStateCost () { return stateCost; }
-    public char[][] getState () { return cloneState(state); }
+    public char[][] getState () { return cloneState(state); }//return state.clone();
     public Point getSpacePos () {
         // Return the space's position
         int height = state.length;

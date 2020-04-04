@@ -8,8 +8,14 @@ import java.util.*;
 // Every algorithm extends this class
 // so nPuzzles.solve() could choose algorithms at run-time
 abstract class PuzzlesAlgorithm {
-    abstract void puzzleAlgo(PuzzleState init, PuzzleState goal);
+    abstract void puzzleAlgorithm(PuzzleState init, PuzzleState goal);
     HashMap<Integer, PuzzleState> exploredStates;
+
+    static protected boolean isExplored (PuzzleState state, HashMap<Integer, PuzzleState> explored) {
+        return explored.containsKey(state.hashCode());
+    }
+    protected abstract boolean isQueued (PuzzleState state, Object queue);
+    protected abstract void addValidState (PuzzleState state, Object queue);
 }
 
 
@@ -30,10 +36,12 @@ class PrintState {
             PuzzleState aState = stack.pop();
             printState(aState);
         }
+
+
     }
 
     // Print a state
-    private static void printState (PuzzleState currState)
+    public static void printState (PuzzleState currState)
     {
         char[][] refState = currState.getState();
         for (char[] line : refState) {
@@ -49,83 +57,15 @@ class PrintState {
     }
 }
 
-class CostCompare implements Comparator<PuzzleState> {
 
-    // Constructor
-    public CostCompare () {}
-    public CostCompare (PuzzleState p) {
-        goal = p;
-    }
 
-    // goal
-    private PuzzleState goal = null;
-    // Setter
-    public void setGoal (PuzzleState g) { goal = g; }
 
-    // Methods below must be called after goal is set
 
-    // F-cost() = G() + H();
-    // G() = cost to reach the current state from the initial state
-    // H() = cost to reach the goal state from the current state
-    // Return the F-cost(), total cost
-    private int totalCost (PuzzleState p) {
-        int gCost = p.getStateCost();
-        int hCost = hCost(p, goal);
-        return gCost + hCost;
-    }
+// Depth First Search
+class DFS extends PuzzlesAlgorithm {
 
-    // Calculate the Manhattan distance as Hcost
-    private int hCost (PuzzleState curr, PuzzleState goal) {
-        char[][] currState = curr.getState();
-        char[][] goalState = goal.getState();
-        int sumDistance = 0;
-        for (int y = 0; y != currState.length; y++) {
-            for (int x = 0; x != currState[y].length; x++) {
-                Point p = getPos (currState[y][x], goalState);
-                int distance = abs(p.getX() - x) + abs (p.getY() - y);
-                sumDistance += distance;
-            } // end of for x
-        } // end of for y
-
-        return sumDistance;
-    }
-
-    public int compare(PuzzleState a, PuzzleState b)
-    {
-        return totalCost(a) - totalCost(b);
-    }
-
-    // Return ch's position in state
-    // return null if not found
-    private Point getPos (char ch, char[][] state) {
-
-        // Search for chs
-        for (int i = 0; i != state.length; i++) {
-            for (int j = 0; j != state[i].length; j++) {
-                if (state[i][j] == ch) {
-                    return new Point(j, i);
-                }
-            } // end of for j
-        } // end of for i
-
-        // ch not found
-        return null;
-    }
-    // Return an integer's absolute value
-    private static int abs (int i) {
-        return i >= 0? i : -i;
-    }
-}
-
-// A* search
-class ASS extends PuzzlesAlgorithm {
-
-    // Comparator
-    CostCompare costCmp = new CostCompare();
-
-    public void puzzleAlgo (PuzzleState init, PuzzleState goal)
-    {
-        System.out.println ("A* Search");
+    public void puzzleAlgorithm (PuzzleState init, PuzzleState goal) {
+        System.out.println ("Depth First Search");
 
         // Validate inputs
         if (init == null || goal == null) {
@@ -135,13 +75,14 @@ class ASS extends PuzzlesAlgorithm {
 
         // Initialize resources
         exploredStates = new HashMap<Integer, PuzzleState>();
-        costCmp.setGoal(goal);
-        PriorityQueue<PuzzleState> queue = new PriorityQueue<PuzzleState>(costCmp);
-        queue.add(init);
+        LinkedList<PuzzleState> stack = new LinkedList<PuzzleState>();
+        stack.push(init);
 
-        while (!queue.isEmpty()) {
+        while (!stack.isEmpty()) {
             // Initialize
-            PuzzleState currS = queue.poll();
+            PuzzleState currS = stack.pop();
+
+
 
             // Check goal
             if (PuzzleState.equals(currS, goal)) {
@@ -154,127 +95,58 @@ class ASS extends PuzzlesAlgorithm {
             }
 
             // Slide and generate the next possible state
-            addValidState(PuzzleSlider.up(currS), queue);
-            addValidState(PuzzleSlider.down(currS), queue);
-            addValidState(PuzzleSlider.left(currS), queue);
-            addValidState(PuzzleSlider.right(currS), queue);
+            addValidState(PuzzleSlider.up(currS), stack);
+            addValidState(PuzzleSlider.down(currS), stack);
+            addValidState(PuzzleSlider.left(currS), stack);
+            addValidState(PuzzleSlider.right(currS), stack);
         } // end of while
         System.out.println("Failed to find a solution!");
-    } // end of puzzleAlgo()
-
-
-    private static boolean isQueued (PuzzleState state,
-                                     PriorityQueue<PuzzleState> queue) {
-        return queue.contains(state);
     }
 
-    private static boolean isExplored (PuzzleState state,
-                                       HashMap<Integer, PuzzleState> explored) {
-        return explored.containsKey(state.hashCode());
-    }
-
-    // Add a state after validation
-    private void addValidState (PuzzleState state, Object q) {
-        PriorityQueue<PuzzleState>queue = (PriorityQueue<PuzzleState>)q;
-        // If the state is not null, queued or explored
-        // add to exploredStates and enqueue
-        if (state != null
-                && !isQueued(state, queue)
-                && !isExplored(state, exploredStates)) {
-
-
-            int hashcode = PuzzleState.hachcode(state);
-            exploredStates.put(hashcode, state);
-            queue.add(state);
-        }
-        // If the state exists in the queue but has higher cost
-        // replace that node with this state
-        else if (isQueued(state, queue)) {
-            Iterator<PuzzleState> iter =  ((PriorityQueue<PuzzleState>) q).iterator();
-            while (iter.hasNext()) {
-                PuzzleState iterState =  iter.next();
-                if (PuzzleState.equals(state,iterState)
-                && (costCmp.compare(state, iterState) < 0)) {
-                    queue.remove (iterState);
-                    queue.add (state);
-                    break;
-                }
-            } // end of while
-        } // end of if
-        else { // do nothing
-        }
-    }// end of addValidState
-} // end of ASS
-
-// Breadth First Search
-class BFS extends PuzzlesAlgorithm {
-    public void puzzleAlgo (PuzzleState init, PuzzleState goal)
-    {
-        System.out.println ("Breadth First Search");
-
-        // Validate inputs
-        if (init == null || goal == null) {
-            System.out.println("Invalid input!");
-            return;
-        }
-
-        // Initialize resources
-        exploredStates = new HashMap<Integer, PuzzleState>();
-        LinkedList<PuzzleState> queue = new LinkedList<PuzzleState>();
-        queue.add(init);
-
-        while (!queue.isEmpty()) {
-            // Initialize
-            PuzzleState currS = queue.removeFirst();
-
-            // Check goal
-            if (PuzzleState.equals(currS, goal)) {
-                System.out.println("\nGoal reached");
-
-                // Print actions
-                PrintState.printer(currS);
-
-               return;
-            }
-
-            // Slide and generate the next possible state
-            addValidState(PuzzleSlider.up(currS), queue);
-            addValidState(PuzzleSlider.down(currS), queue);
-            addValidState(PuzzleSlider.left(currS), queue);
-            addValidState(PuzzleSlider.right(currS), queue);
-        } // end of while
-
-        System.out.println("Failed to find a solution!");
-    } // end of puzzleAlgo()
-
-
-    private static boolean isQueued (PuzzleState state,
-                                     LinkedList<PuzzleState> queue) {
-        int index = queue.indexOf(state);
+    protected boolean isQueued (PuzzleState state, Object queue) {
+        int index = ((LinkedList<PuzzleState>)queue).indexOf(state);
         return index >= 0? true : false;
     }
 
-    private static boolean isExplored (PuzzleState state,
-                                       HashMap<Integer, PuzzleState> explored) {
-        return explored.containsKey(state.hashCode());
-    }
 
-    // Add a state after validation
-    private void addValidState (PuzzleState state, Object queue) {
+    private static LinkedList<Integer> tryme = new LinkedList<>();
+    private static boolean isExplored (PuzzleState s) {
+        int hashcode = PuzzleState.hachcode(s);
+        if (tryme.contains(hashcode)) {
+            System.out.println("Yes I've found that (tryme)");
+            return true;
+        }
+
+        return false;
+    }
+    protected void addValidState (PuzzleState state, Object stack) {
         // If the state is not null, queued or explored
         // add to exploredStates and enqueue
         if (state != null
-            && !isQueued(state, (LinkedList<PuzzleState>)queue)
-            && !isExplored(state, exploredStates)) {
+                && !isQueued(state, stack)
+                && !isExplored(state)
+        ) {
 
+
+
+            //if (isExplored(state, exploredStates)) {
+                //System.out.println("Yes I've found that (Explored)");
+
+            //}
+
+            //System.out.println("iteration:");
+
+
+           //PrintState.printState(state);
+            //
+            //exploredStates.put(hashcode, state);
             int hashcode = PuzzleState.hachcode(state);
-            exploredStates.put(hashcode, state);
-            ((LinkedList<PuzzleState>) queue).add(state);
+            if (tryme.contains(hashcode)) {
+                System.out.println("Yes I've found that (tryme)");
+                return;
+            }
+            tryme.add(PuzzleState.hachcode(state));
+            ((LinkedList<PuzzleState>) stack).push(state);
         }
     }
-
-
-} // end of class Breadth first
-
-
-
+}
