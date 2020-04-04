@@ -15,21 +15,6 @@ public class main {
         return true;
     }
 
-    //public static int hashcode(char[][] a) {    }
-
-    public static void printer(char[][] refState) {
-        for (char[] line : refState) {
-            for (char ch : line){
-                if (ch == ' ')
-                    System.out.print("# ");
-                else
-                    System.out.printf("%c ", ch);
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
     public static void main (String[] arg) {
 
         char[][] startState0 = {
