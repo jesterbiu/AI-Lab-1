@@ -3,18 +3,6 @@ import nPuzzles.*;
 import java.util.Arrays;
 
 public class main {
-    public static boolean equals(char[][] a, char[][] b) {
-        for (int iLine = 0; iLine != a.length; iLine++) {
-            if (Arrays.equals(a[iLine], b[iLine])) {
-                continue;
-            }
-            else {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static void main (String[] arg) {
 
         char[][] startState0 = {
