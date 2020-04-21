@@ -1,9 +1,8 @@
 package nPuzzles;
 
-
 import java.util.Arrays;
 
-public class PuzzleState {
+public class PuzzleState implements Comparable<PuzzleState>{
     // Parent state
     private PuzzleState parentState = null;
     int stateCost = 0;
@@ -48,13 +47,26 @@ public class PuzzleState {
     }
 
     // Comparable
-    public boolean equals (PuzzleState oth) {
-        if (oth == this)
-            return true;
-        return Arrays.deepEquals(this.state, oth.state);
+    public String toString()
+    {
+        String stateString = "";
+        for (int i = 0; i != state.length; i++)
+        {
+            stateString += String.valueOf(state[i]);
+        }
+        return stateString;
     }
+
+    public int compareTo(PuzzleState oth) {
+        return toString().compareTo(oth.toString());
+    }
+
+    public boolean equals(PuzzleState oth) {
+        return (this.toString().equals(oth.toString()));
+    }
+
     public int hashCode () {
-        return Arrays.deepHashCode(state);
+        return toString().hashCode();
     }
 
     // Getter

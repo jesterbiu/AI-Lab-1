@@ -14,13 +14,15 @@ class BFS extends PuzzlesAlgorithm {
         }
 
         // Initialize resources
-        exploredStates = new HashMap<Integer, PuzzleState>();
+        exploredStates = new HashMap<String, PuzzleState>();
         LinkedList<PuzzleState> queue = new LinkedList<PuzzleState>();
         queue.add(init);
 
         while (!queue.isEmpty()) {
             // Initialize
             PuzzleState currS = queue.removeFirst();
+
+            //PrintState.printState(currS);
 
             // Check goal
             if (currS.equals(goal)) {
@@ -33,8 +35,7 @@ class BFS extends PuzzlesAlgorithm {
             }
 
             // add to Explored
-            int hashcode = currS.hashCode();
-            exploredStates.put(hashcode, currS);
+            exploredStates.put(currS.toString(), currS);
 
             // Slide and generate the next possible state
             addValidState(PuzzleSlider.up(currS), queue);
@@ -48,8 +49,8 @@ class BFS extends PuzzlesAlgorithm {
 
 
     protected boolean isQueued (PuzzleState state, Object queue) {
-        int index = ((LinkedList<PuzzleState>)queue).indexOf(state);
-        return index >= 0;
+        return ((LinkedList<PuzzleState>)queue).contains(state);
+
     }
 
 
@@ -62,7 +63,7 @@ class BFS extends PuzzlesAlgorithm {
         if (!isQueued(state, queue)
                 && !isExplored(state, exploredStates)
         )
-            ((LinkedList<PuzzleState>) queue).push(state);
+            ((LinkedList<PuzzleState>) queue).add(state);
     }
 
 

@@ -1,7 +1,9 @@
+
 package nPuzzles;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+
 
 // Depth First Search
 class DFS extends PuzzlesAlgorithm {
@@ -16,7 +18,7 @@ class DFS extends PuzzlesAlgorithm {
         }
 
         // Initialize resources
-        exploredStates = new HashMap<Integer, PuzzleState>();
+        exploredStates = new HashMap<String, PuzzleState>();
         LinkedList<PuzzleState> stack = new LinkedList<PuzzleState>();
         stack.push(init);
 
@@ -25,7 +27,7 @@ class DFS extends PuzzlesAlgorithm {
             PuzzleState currS = stack.pop();
 
             // test print
-            System.out.println(currS.hashCode());
+            //System.out.println(currS.hashCode());
 
             // Check goal
             if (currS.equals(goal)) {
@@ -39,7 +41,7 @@ class DFS extends PuzzlesAlgorithm {
 
             // add to Explored
             int hashcode = currS.hashCode();
-            exploredStates.put(hashcode, currS);
+            exploredStates.put(currS.toString(), currS);
 
 
             // Slide and generate the next possible state

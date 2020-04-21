@@ -9,12 +9,16 @@ import java.util.*;
 // so nPuzzles.solve() could choose algorithms at run-time
 abstract class PuzzlesAlgorithm {
     abstract void puzzleAlgorithm(PuzzleState init, PuzzleState goal);
-    HashMap<Integer, PuzzleState> exploredStates;
+    HashMap<String, PuzzleState> exploredStates;
+    //HashSet<PuzzleState> exploredStates;
 
-    static protected boolean isExplored (PuzzleState state, HashMap<Integer, PuzzleState> explored) {
-        return explored.containsKey(state.hashCode());
+    static protected boolean isExplored (PuzzleState state,
+                                         HashMap<String, PuzzleState> explored) {
+        return explored.containsKey(state.toString());
     }
+
     protected abstract boolean isQueued (PuzzleState state, Object queue);
+
     protected abstract void addValidState (PuzzleState state, Object queue);
 }
 

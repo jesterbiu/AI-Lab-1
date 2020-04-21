@@ -17,7 +17,7 @@ class ASS extends PuzzlesAlgorithm {
         }
 
         // Initialize resources
-        exploredStates = new HashMap<Integer, PuzzleState>();
+        exploredStates = new HashMap<String, PuzzleState>();
         costCmp.setGoal(goal);
         PriorityQueue<PuzzleState> queue = new PriorityQueue<PuzzleState>(costCmp);
         queue.add(init);
@@ -25,6 +25,7 @@ class ASS extends PuzzlesAlgorithm {
         while (!queue.isEmpty()) {
             // Initialize
             PuzzleState currS = queue.poll();
+            //PrintState.printState(currS);
 
             // Check goal
             if (currS.equals(goal)) {
@@ -37,8 +38,8 @@ class ASS extends PuzzlesAlgorithm {
             }
 
             // add to Explored
-            int hashcode = currS.hashCode();
-            exploredStates.put(hashcode, currS);
+            //int hashcode = currS.hashCode();
+            exploredStates.put(currS.toString(), currS);
 
             // Slide and generate the next possible state
             addValidState(PuzzleSlider.up(currS), queue);
@@ -56,20 +57,13 @@ class ASS extends PuzzlesAlgorithm {
 
     // Add a state after validation
     protected void addValidState (PuzzleState state, Object q) {
-        PriorityQueue<PuzzleState>queue = (PriorityQueue<PuzzleState>)q;
-        // If the state is not null, queued or explored
-        // add to exploredStates and enqueue
-        if (state != null
-                && !isQueued(state, queue)
-                && !isExplored(state, exploredStates)) {
+        if (state == null)
+            return;
 
-
-
-            queue.add(state);
-        }
         // If the state exists in the queue but has higher cost
-        // replace that node with this state
-        else if (isQueued(state, queue)) {
+        // replace that with this state
+        PriorityQueue<PuzzleState>queue = (PriorityQueue<PuzzleState>)q;
+        if (isQueued(state, queue)) {
             Iterator<PuzzleState> iter =  ((PriorityQueue<PuzzleState>) q).iterator();
             while (iter.hasNext()) {
                 PuzzleState iterState =  iter.next();
@@ -80,8 +74,13 @@ class ASS extends PuzzlesAlgorithm {
                     break;
                 }
             } // end of while
-        } // end of if
-        else { // do nothing
+        }
+        // If the state is not queued
+        // and not explored, enqueue
+        else {
+           if (!isExplored(state, exploredStates)) {
+               queue.add(state);
+           }
         }
     }// end of addValidState
 } // end of ASS
