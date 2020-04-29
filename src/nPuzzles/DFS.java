@@ -17,6 +17,9 @@ class DFS extends PuzzlesAlgorithm {
             return;
         }
 
+        // start counting
+        timeCounter.startCounting();
+
         // Initialize resources
         exploredStates = new HashMap<String, PuzzleState>();
         LinkedList<PuzzleState> stack = new LinkedList<PuzzleState>();
@@ -31,7 +34,11 @@ class DFS extends PuzzlesAlgorithm {
 
             // Check goal
             if (currS.equals(goal)) {
-                System.out.println("\nGoal reached");
+                System.out.println("Goal reached");
+
+                // print time
+                double timeElapsed = timeCounter.stopCounting();
+                System.out.printf("%f seconds used\n\n",  timeElapsed);
 
                 // Print actions
                 PrintState.printer(currS);
@@ -50,6 +57,8 @@ class DFS extends PuzzlesAlgorithm {
             addValidState(PuzzleSlider.left(currS), stack);
             addValidState(PuzzleSlider.right(currS), stack);
         } // end of while
+
+        timeCounter.stopCounting();
         System.out.println("Failed to find a solution!");
     }
 

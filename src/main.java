@@ -63,19 +63,23 @@ public class main {
         PuzzleState goal0 = new PuzzleState(goalState0);
         PuzzleState goal1 = new PuzzleState(goalState1);
 
-        PuzzleState[] initStates0 = { start0, start1 };
-        PuzzleState[] initStates1 = { start2, start3 };
-
-
+        int bfs = 1, ass = 2, dfs = 3;
         //nPuzzles.InstantiateAlgorithm(start0, goal0, bfs);
-        for (PuzzleState state : initStates0) {
-            nPuzzles.Solve(state, goal0);
-        }
-        for (PuzzleState state : initStates1) {
-            nPuzzles.Solve(state, goal1);
-        }
+        //nPuzzles.InstantiateAlgorithm(start0, goal0, ass);
+        //nPuzzles.InstantiateAlgorithm(start0, goal0, dfs);
+
+        //nPuzzles.InstantiateAlgorithm(start1, goal0, bfs);
+        //nPuzzles.InstantiateAlgorithm(start1, goal0, ass);
+        //nPuzzles.InstantiateAlgorithm(start1, goal0, dfs);
 
 
+        //nPuzzles.InstantiateAlgorithm(start2, goal1, bfs);
+        nPuzzles.InstantiateAlgorithm(start2, goal1, ass);
+        //nPuzzles.InstantiateAlgorithm(start2, goal1, dfs);
+
+        //nPuzzles.InstantiateAlgorithm(start3, goal1, bfs);
+        nPuzzles.InstantiateAlgorithm(start3, goal1, ass);
+        //nPuzzles.InstantiateAlgorithm(start3, goal1, dfs);
 
 
     } // end of main

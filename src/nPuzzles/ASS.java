@@ -16,6 +16,9 @@ class ASS extends PuzzlesAlgorithm {
             return;
         }
 
+        // start counting
+        timeCounter.startCounting();
+
         // Initialize resources
         exploredStates = new HashMap<String, PuzzleState>();
         costCmp.setGoal(goal);
@@ -29,7 +32,11 @@ class ASS extends PuzzlesAlgorithm {
 
             // Check goal
             if (currS.equals(goal)) {
-                System.out.println("\nGoal reached");
+                System.out.println("Goal reached");
+
+                // print time
+                double timeElapsed = timeCounter.stopCounting();
+                System.out.printf("%f seconds used\n\n",  timeElapsed);
 
                 // Print actions
                 PrintState.printer(currS);
@@ -47,6 +54,8 @@ class ASS extends PuzzlesAlgorithm {
             addValidState(PuzzleSlider.left(currS), queue);
             addValidState(PuzzleSlider.right(currS), queue);
         } // end of while
+
+        timeCounter.stopCounting();
         System.out.println("Failed to find a solution!");
     } // end of puzzleAlgo()
 

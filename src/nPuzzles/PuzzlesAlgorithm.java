@@ -10,7 +10,6 @@ import java.util.*;
 abstract class PuzzlesAlgorithm {
     abstract void puzzleAlgorithm(PuzzleState init, PuzzleState goal);
     HashMap<String, PuzzleState> exploredStates;
-    //HashSet<PuzzleState> exploredStates;
 
     static protected boolean isExplored (PuzzleState state,
                                          HashMap<String, PuzzleState> explored) {
